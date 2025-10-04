@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>KisanMitra Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+    // Fetch and display market price from Data Agro API when Market quick access is clicked
+    async function fetchMarketPrice() {
+      const priceBox = document.getElementById('market-price-value');
+      if (priceBox) {
+        priceBox.textContent = 'Loading...';
+        priceBox.style.fontSize = '1rem';
+      }
+      try {
+        // Data Agro API for mandi prices (example for tomato, Delhi)
+        const apiKey = '579b464db66ec23bdd000001a2bf105e22704d5979335d03e9e6746e';
+        // This endpoint is based on Data Agro's documentation for demonstration
+        // You may need to adjust the endpoint and parameters as per actual API docs
+        const url = `https://dataagroapi.onrender.com/mandi/mandiprices?apikey=${apiKey}&commodity=Tomato&state=Delhi`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('API error');
+        const data = await res.json();
+        // Try to extract price from the response
+        let price = 'N/A';
+        if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+          // Use modal_price or min_price or max_price if available
+          const mandi = data.data[0];
+          if (mandi.modal_price) price = `₹${mandi.modal_price}/quintal`;
+          else if (mandi.min_price) price = `₹${mandi.min_price}/quintal`;
+          else if (mandi.max_price) price = `₹${mandi.max_price}/quintal`;
+        }
+        priceBox.textContent = price;
+        priceBox.style.fontSize = '1rem';
+      } catch (e) {
+        if (priceBox) {
+          priceBox.textContent = 'N/A';
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      const marketBtn = document.querySelector('.quick-access-button:nth-child(4)');
+      if (marketBtn) {
+        marketBtn.addEventListener('click', fetchMarketPrice);
+      }
+    });
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4ade80", // Green-400
+              "background-light": "#f0fdf4", // Green-50
+              "background-dark": "#022c22", // A darker green
+              "card-light": "#ecfdf5", // Green-100
+              "card-dark": "#064e3b", // A darker green for cards
+              "text-light": "#14532d", // Green-900
+              "text-dark": "#dcfce7", // Green-200
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem",
+              lg: "1.5rem",
+              xl: "2.5rem",
+              full: "9999px",
+            },
+            keyframes: {
+              pulse: {
+                "0%, 100%": {
+                  transform: "scale(1)",
+                  boxShadow: "0 0 0 0 rgba(74, 222, 128, 0.4)",
+                },
+                "50%": {
+                  transform: "scale(1.05)",
+                  boxShadow: "0 0 20px 10px rgba(74, 222, 128, 0)",
+                },
+              },
+              float: {
+                "0%, 100%": { transform: "translateY(0px)" },
+                "50%": { transform: "translateY(-10px)" },
+              },
+            },
+            animation: {
+              pulse: "pulse 2.5s infinite ease-in-out",
+              float: "float 6s infinite ease-in-out",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .card-glow {
+        position: relative;
+        overflow: hidden;
+      }
+      .card-glow::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(74, 222, 128, 0.1) 0%,
+          transparent 40%
+        );
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        pointer-events: none;
+      }
+      .group:hover .card-glow::before {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.5);
+      }
+      .glassmorphism {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .dark .glassmorphism {
+        background: rgba(22, 101, 52, 0.2);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+      }
+      .floating-bubble {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(74, 222, 128, 0.15) 0%,
+          transparent 70%
+        );
+        animation: float 8s infinite ease-in-out;
+      }
+      .quick-access-button:nth-child(1) {
+        transform: translate(-100px, -100px);
+      }
+      .quick-access-button:nth-child(2) {
+        transform: translate(100px, -100px);
+      }
+      .quick-access-button:nth-child(3) {
+        transform: translate(-150px, 40px);
+      }
+      .quick-access-button:nth-child(4) {
+        transform: translate(150px, 40px);
+      }
+      .quick-access-button:nth-child(5) {
+        transform: translate(0px, 140px);
+      }
+       .chatbot-modal {
+    display: none;
+    position: fixed;
+    z-index: 50;
+    top: 50%;
+    left: 50%;
+    width: 50vw;
+    height: 50vh;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 40px 8px rgba(0,0,0,0.18);
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+    transition: box-shadow 0.2s;
+  }
+  .chatbot-modal.dark {
+    background: #022c22;
+    color: #dcfce7;
+  }
+  .chatbot-modal.open {
+    display: flex;
+    flex-direction: column;
+    /* Remove any fixed height if present */
+  }
+     
+      .chatbot-header {
+        background: #4ade80;
+        color: #fff;
+        padding: 1rem;
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .chatbot-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        background: #ecfdf5;
+      }
+      .chatbot-modal.dark .chatbot-messages {
+        background: #064e3b;
+      }
+      .chatbot-input-container {
+        display: flex;
+        border-top: 1px solid #e5e7eb;
+        background: #fff;
+      }
+      .chatbot-modal.dark .chatbot-input-container {
+        background: #064e3b;
+        border-top: 1px solid #14532d;
+      }
+      .chatbot-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 0.75rem;
+        font-size: 1rem;
+        background: transparent;
+        color: black;
+        
+      }
+      .chatbot-send-btn {
+        background: #4ade80;
+        color: #fff;
+        border: none;
+        padding: 0 1.2rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .chatbot-send-btn:hover {
+        background: #16a34a;
+      }
+      .chatbot-close {
+        cursor: pointer;
+        font-size: 1.3rem;
+        background: none;
+        border: none;
+        color: inherit;
+      }
+      .chatbot-bubble {
+        margin-bottom: 0.5rem;
+        padding: 0.6rem 1rem;
+        border-radius: 1rem;
+        max-width: 80%;
+        clear: both;
+        font-size: 0.97rem;
+        word-break: break-word;
+      }
+      .chatbot-bubble.user {
+        background: #4ade80;
+        color: #fff;
+        margin-left: auto;
+        text-align: right;
+      }
+      .chatbot-bubble.bot {
+        background: #f0fdf4;
+        color: #14532d;
+        margin-right: auto;
+        text-align: left;
+      }
+      .chatbot-modal.dark .chatbot-bubble.bot {
+        background: #022c22;
+        color: #dcfce7;
+      }
+      .chatbot-modal.dark .chatbot-bubble.user {
+        background: #4ade80;
+        color: #fff;
+      }
+    </style>
+
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark selection:bg-primary/20"
+    onload="translatePage()"
+  >
+    <div class="relative min-h-screen w-full overflow-hidden">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%-20%,rgba(134,239,172,0.1),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%-20%,rgba(22,101,52,0.2),rgba(255,255,255,0))]"
+      ></div>
+      <div class="absolute inset-0">
+        <div
+          class="floating-bubble"
+          style="
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: -2s;
+          "
+        ></div>
+        <div
+          class="floating-bubble"
+          style="
+            width: 60px;
+            height: 60px;
+            top: 50%;
+            left: 80%;
+            animation-delay: -4s;
+          "
+        ></div>
+        <div
+          class="floating-bubble"
+          style="
+            width: 80px;
+            height: 80px;
+            bottom: 15%;
+            left: 5%;
+            animation-delay: 0s;
+          "
+        ></div>
+        <div
+          class="floating-bubble"
+          style="
+            width: 50px;
+            height: 50px;
+            top: 10%;
+            right: 10%;
+            animation-delay: -6s;
+          "
+        ></div>
+      </div>
+
+      <div class="relative z-10 flex h-full min-h-screen flex-col">
+        <header
+          class="flex items-center justify-between whitespace-nowrap px-6 py-5 sm:px-10"
+        >
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-3xl text-primary"
+              >agriculture</span
+            >
+            <h1 class="text-xl font-semibold text-white dark:text-white">
+              KisanMitra
+            </h1>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="relative hidden sm:block">
+              <input
+                class="h-11 w-48 rounded-full bg-primary/20 pl-10 pr-4 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Search..."
+                type="text"
+              />
+              <span
+                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/60"
+                >search</span
+              >
+            </div>
+            <button
+              class="relative flex h-11 w-11 items-center justify-center rounded-full bg-primary/20 text-primary transition-colors hover:bg-primary hover:text-white"
+            >
+              <span class="material-symbols-outlined text-2xl">language</span>
+            </button>
+            <div
+              class="h-11 w-11 rounded-full bg-cover bg-center ring-2 ring-primary/30"
+              style='background-image: url("https://lh3.googleusercontent.com/a-/AOh14GhAPM3jXGv_2j3m-1s1E0KzY2s_0E4h3J3l1g=s96-c");'
+            ></div>
+          </div>
+        </header>
+
+        <main class="flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8">
+          <div class="w-full max-w-5xl text-center mb-16">
+            <h2
+              class="text-4xl font-bold tracking-tight text-white dark:text-white sm:text-5xl md:text-6xl"
+            >
+              Welcome, Farmer!
+            </h2>
+            <p
+              class="mt-4 text-lg text-white/60 dark:text-white/60 sm:text-xl"
+            >
+              Your personal farming assistant.
+            </p>
+          </div>
+
+          <div
+            class="relative mb-28 flex h-[250px] w-full max-w-2xl items-center justify-center"
+          >
+            <div
+              class="quick-access-container absolute inset-0 flex items-center justify-center"
+            >
+              <button
+                class="quick-access-button absolute flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-full text-center shadow-xl shadow-black/10 glassmorphism dark:shadow-black/30"
+              >
+                <span class="material-symbols-outlined text-4xl text-primary"
+                  >forum</span
+                >
+                <span
+                  class="text-sm font-medium text-text-light dark:text-text-dark"
+                  >Chat</span
+                >
+              </button>
+              <button
+                class="quick-access-button absolute flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-full text-center shadow-xl shadow-black/10 glassmorphism dark:shadow-black/30"
+              >
+                <span class="material-symbols-outlined text-4xl text-primary"
+                  >photo_camera</span
+                >
+                <span
+                  class="text-sm font-medium text-text-light dark:text-text-dark"
+                  >Analyze</span
+                >
+              </button>
+              <button
+                class="quick-access-button absolute flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-full text-center shadow-xl shadow-black/10 glassmorphism dark:shadow-black/30"
+              >
+                <span class="material-symbols-outlined text-4xl text-primary"
+                  >cloudy</span
+                >
+                <span
+                  class="text-sm font-medium text-text-light dark:text-text-dark"
+                  >Weather</span
+                >
+              </button>
+              <button
+                class="quick-access-button absolute flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-full text-center shadow-xl shadow-black/10 glassmorphism dark:shadow-black/30"
+              >
+                <span class="material-symbols-outlined text-4xl text-primary"
+                  >monitoring</span
+                >
+                <span
+                  class="text-sm font-medium text-text-light dark:text-text-dark"
+                  >Market</span
+                >
+              </button>
+              <button
+                class="quick-access-button absolute flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-full text-center shadow-xl shadow-black/10 glassmorphism dark:shadow-black/30"
+              >
+                <span class="material-symbols-outlined text-4xl text-primary"
+                  >groups</span
+                >
+                <span
+                  class="text-sm font-medium text-text-light dark:text-text-dark"
+                  >Connect</span
+                >
+              </button>
+            </div>
+            <button
+              class="group relative z-10 flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-primary/80 to-primary/50 text-white shadow-2xl shadow-primary/30 transition-transform duration-300 active:scale-95"
+              id="mic-button"
+            >
+              <span class="material-symbols-outlined text-7xl drop-shadow-lg"
+                >mic</span
+              >
+              <div
+                class="absolute inset-0 rounded-full border-2 border-white/30"
+              ></div>
+              <div
+                class="absolute inset-0 animate-ping rounded-full bg-primary/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              ></div>
+            </button>
+          </div>
+
+          <div
+            class="grid w-full max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            <a
+              class="group card-glow relative flex h-auto min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-card-light p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 dark:bg-card-dark"
+              href="#"
+            >
+              <div
+                class="absolute inset-0 bg-cover bg-center opacity-10 transition-transform duration-500 group-hover:scale-105 dark:opacity-5"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDNRI5I26j50F1TPAkj-_C2Q08qiIdgb0qgIATT4uEA-KWFoqUubiCYAFYnSnNaubTZrK_ZZoYEq3weTa2FziVkhXukD7OWlzCwJ2ugrXqY43AOv1jyq0NWM_Y8oqRWkTMSxESnInGYXPjeMqppvCv4umRg7T04v3ChZiSvDtsFVBGQURl3_AcOI2NaTHGEwD8cJgl2KRXB97p8fbzluzNfv6XUna173se_GLLsaHKQdzWcIa3okPVhue75saF2otbdpIymCcITrn2a");'
+              ></div>
+              <div class="relative z-10">
+                <span class="material-symbols-outlined mb-3 text-4xl text-primary"
+                  >grass</span
+                >
+                <h3
+                  class="text-xl font-semibold text-text-light dark:text-white"
+                >
+                  Crop Advice
+                </h3>
+                <p class="mt-1 text-text-light/70 dark:text-text-dark/70">
+                  Personalized crop recommendations.
+                </p>
+              </div>
+              <span
+                class="relative z-10 mt-4 self-start rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors group-hover:bg-primary group-hover:text-white"
+                >Learn More</span
+              >
+            </a>
+            <a
+              class="group card-glow relative flex h-auto min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-card-light p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 dark:bg-card-dark"
+              href="#"
+            >
+              <div
+                class="absolute inset-0 bg-cover bg-center opacity-10 transition-transform duration-500 group-hover:scale-105 dark:opacity-5"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCsciJjvSEiHpA64-MGsZIlgVQ0r_3PySWykeYKfatptjz-7hkg2O1c00vbs1FKUkiqf2HcvCQfv5CtOvbOAZQ6ESHvqy7IxG-gO933aag4kFMBQTfL4gi6Za9IKim4hip5eO78jrzkUebjjCu7B6ghTqK0ix8fnggaQHvwMPMFug2z_NuGp_O1Lxd0DgzWigzMB_Y2Eac3-eRqyZg1FlKWcD8qZ1NQ0xQUdYABvx4Q0ke4cDv55RcS02g3kkq1WGhc0Q3yV6UDvkq7");'
+              ></div>
+              <div class="relative z-10">
+                <span class="material-symbols-outlined mb-3 text-4xl text-primary"
+                  >monitoring</span
+                >
+                <h3
+                  class="text-xl font-semibold text-text-light dark:text-white"
+                >
+                  Market Prices
+                </h3>
+                <p class="mt-1 text-text-light/70 dark:text-text-dark/70">
+                  Latest market price updates.
+                </p>
+              </div>
+              <span
+                class="relative z-10 mt-4 self-start rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors group-hover:bg-primary group-hover:text-white"
+                >View Prices</span
+              >
+            </a>
+            <a
+              class="group card-glow relative flex h-auto min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-card-light p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 dark:bg-card-dark"
+              href="#"
+            >
+              <div
+                class="absolute inset-0 bg-cover bg-center opacity-10 transition-transform duration-500 group-hover:scale-105 dark:opacity-5"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCR7mFNueefDAfGcWNvrI5h02SigW6kF2Qathcwq7hHuSz1XZixlhxuPtUxrsjANcx9um46l5K9ZzVEbu4EwMvk0j3Yd5Mes2vMiVqc2NnRLTNSmRB8b9kCTgtjgqikBt3m_63oiI1axsb6aCbQJSzqGsg062BzihFHxTcNVjwcVZx6odZpzZjgBszWMVrYqlYzEUcWHgP5WJ0s1dhpFSlAJJdlapanO_TT_gqhleDq_4jg3VdvF1cLBaEEqp25WZWYOCX7EYv0T3Zj");'
+              ></div>
+              <div class="relative z-10">
+                <span class="material-symbols-outlined mb-3 text-4xl text-primary"
+                  >cloudy</span
+                >
+                <h3
+                  class="text-xl font-semibold text-text-light dark:text-white"
+                >
+                  Weather Updates
+                </h3>
+                <p class="mt-1 text-text-light/70 dark:text-text-dark/70">
+                  Real-time weather forecasts.
+                </p>
+              </div>
+              <span
+                class="relative z-10 mt-4 self-start rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors group-hover:bg-primary group-hover:text-white"
+                >Check Forecast</span
+              >
+            </a>
+            <a
+              class="group card-glow relative flex h-auto min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-card-light p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 dark:bg-card-dark"
+              href="#"
+            >
+              <div
+                class="absolute inset-0 bg-cover bg-center opacity-10 transition-transform duration-500 group-hover:scale-105 dark:opacity-5"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBw3ak8QwrOfsFqD1oQBuCteqvsX347goeJnhzxWyyH_exhtEYubR9zU8hUb2j-3OTranAq_URTRmcmSMxFhutV5VJuEzfF_Vg_QOjmpbsboUg7y4hoipuovpd12xeWHOlOotkLJ3f1Do-Z1bLERxVr_-OfDehToVUfQMpRoFhlxvW1F0dWy_UgSY7jpeLYdkr-9hrNzbdrwkOBpdgU6yT5bvkn06ZNtNVa_2Z38o22FGes3ysHUtkokTGpnucu2Nv35giwfKm-x43u");'
+              ></div>
+              <div class="relative z-10">
+                <span class="material-symbols-outlined mb-3 text-4xl text-primary"
+                  >coronavirus</span
+                >
+                <h3
+                  class="text-xl font-semibold text-text-light dark:text-white"
+                >
+                  Disease Detection
+                </h3>
+                <p class="mt-1 text-text-light/70 dark:text-text-dark/70">
+                  Identify and correct crop diseases.
+                </p>
+              </div>
+              <span
+                class="relative z-10 mt-4 self-start rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors group-hover:bg-primary group-hover:text-white"
+                >Scan Crop</span
+              >
+            </a>
+            <a
+              class="group card-glow relative flex h-auto min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-card-light p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 dark:bg-card-dark"
+              href="#"
+            >
+              <div
+                class="absolute inset-0 bg-cover bg-center opacity-10 transition-transform duration-500 group-hover:scale-105 dark:opacity-5"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBw3ak8QwrOfsFqD1oQBuCteqvsX347goeJnhzxWyyH_exhtEYubR9zU8hUb2j-3OTranAq_URTRmcmSMxFhutV5VJuEzfF_Vg_QOjmpbsboUg7y4hoipuovpd12xeWHOlOotkLJ3f1Do-Z1bLERxVr_-OfDehToVUfQMpRoFhlxvW1F0dWy_UgSY7jpeLYdkr-9hrNzbdrwkOBpdgU6yT5bvkn06ZNtNVa_2Z38o22FGes3ysHUtkokTGpnucu2Nv35giwfKm-x43u");'
+              ></div>
+              <div class="relative z-10">
+                <span class="material-symbols-outlined mb-3 text-4xl text-primary"
+                  >account_balance</span
+                >
+                <h3
+                  class="text-xl font-semibold text-text-light dark:text-white"
+                >
+                  Schemes
+                </h3>
+                <p class="mt-1 text-text-light/70 dark:text-text-dark/70">
+                  Find relevant government schemes for you.
+                </p>
+              </div>
+              <span
+                class="relative z-10 mt-4 self-start rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors group-hover:bg-primary group-hover:text-white"
+                >Explore Schemes</span
+              >
+            </a>
+            <a
+              class="group card-glow relative flex h-auto min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-card-light p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 dark:bg-card-dark"
+              href="#"
+            >
+              <div
+                class="absolute inset-0 bg-cover bg-center opacity-10 transition-transform duration-500 group-hover:scale-105 dark:opacity-5"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBw3ak8QwrOfsFqD1oQBuCteqvsX347goeJnhzxWyyH_exhtEYubR9zU8hUb2j-3OTranAq_URTRmcmSMxFhutV5VJuEzfF_Vg_QOjmpbsboUg7y4hoipuovpd12xeWHOlOotkLJ3f1Do-Z1bLERxVr_-OfDehToVUfQMpRoFhlxvW1F0dWy_UgSY7jpeLYdkr-9hrNzbdrwkOBpdgU6yT5bvkn06ZNtNVa_2Z38o22FGes3ysHUtkokTGpnucu2Nv35giwfKm-x43u");'
+              ></div>
+              <div class="relative z-10">
+                <span class="material-symbols-outlined mb-3 text-4xl text-primary"
+                  >support_agent</span
+                >
+                <h3
+                  class="text-xl font-semibold text-text-light dark:text-white"
+                >
+                  Helpline
+                </h3>
+                <p class="mt-1 text-text-light/70 dark:text-text-dark/70">
+                  Get support from our experts.
+                </p>
+              </div>
+              <span
+                class="relative z-10 mt-4 self-start rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary transition-colors group-hover:bg-primary group-hover:text-white"
+                >Contact Us</span
+              >
+            </a>
+          </div>
+
+          <div
+            class="mt-16 w-full max-w-7xl rounded-lg bg-card-light p-4 dark:bg-card-dark sm:mt-24 sm:p-8"
+          >
+            <div class="flex flex-col">
+              <h2
+                class="px-4 pb-3 pt-5 text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-white"
+              >
+                Quick Access Panel
+              </h2>
+              <div class="pb-3">
+                <div class="flex gap-8 border-b border-primary/20 px-4">
+                  <a
+                    class="flex flex-col items-center justify-center gap-1 border-b-[3px] border-b-primary pb-[7px] pt-2.5 text-text-light dark:text-white"
+                    href="#"
+                  >
+                    <div class="text-primary">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24px"
+                        height="24px"
+                        fill="currentColor"
+                        viewBox="0 0 256 256"
+                      >
+                        <path
+                          d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm8,24a64,64,0,1,0,64,64A64.07,64.07,0,0,0,128,64ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <p
+                      class="text-sm font-bold leading-normal tracking-[0.015em] text-text-light dark:text-white"
+                    >
+                      Weather
+                    </p>
+                  </a>
+                  <a
+                    class="flex flex-col items-center justify-center gap-1 border-b-[3px] border-b-transparent pb-[7px] pt-2.5 text-text-light/70 dark:text-text-dark/70"
+                    href="#"
+                  >
+                    <div class="">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24px"
+                        height="24px"
+                        fill="currentColor"
+                        viewBox="0 0 256 256"
+                      >
+                        <path
+                          d="M247.63,39.89a8,8,0,0,0-7.52-7.52c-51.76-3-93.32,12.74-111.18,42.22-11.8,19.49-11.78,43.16-.16,65.74a71.34,71.34,0,0,0-14.17,27L98.33,151c7.82-16.33,7.52-33.35-1-47.49-13.2-21.79-43.67-33.47-81.5-31.25a8,8,0,0,0-7.52,7.52c-2.23,37.83,9.46,68.3,31.25,81.5A45.82,45.82,0,0,0,63.44,168,54.58,54.58,0,0,0,87,162.33l25,25V216a8,8,0,0,0,16,0V186.51a55.61,55.61,0,0,1,12.27-35,73.91,73.91,0,0,0,33.31,8.4,60.9,60.9,0,0,0,31.83-8.86C234.89,133.21,250.67,91.65,247.63,39.89ZM47.81,147.6C32.47,138.31,23.79,116.32,24,88c28.32-.24,50.31,8.47,59.6,23.81,4.85,8,5.64,17.33,2.46,26.94L61.65,114.34a8,8,0,0,0-11.31,11.31l24.41,24.41C65.14,153.24,55.82,152.45,47.81,147.6Zm149.31-10.22c-13.4,8.11-29.15,8.73-45.15,2l53.69-53.7a8,8,0,0,0-11.31-11.31L140.65,128c-6.76-16-6.15-31.76,2-45.15,13.94-23,47-35.82,89.33-34.83C232.94,90.34,220.14,123.44,197.12,137.38Z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <p
+                      class="text-sm font-bold leading-normal tracking-[0.015em]"
+                    >
+                      Crop Management
+                    </p>
+                  </a>
+                  <a
+                    class="flex flex-col items-center justify-center gap-1 border-b-[3px] border-b-transparent pb-[7px] pt-2.5 text-text-light/70 dark:text-text-dark/70"
+                    href="#"
+                  >
+                    <div class="">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24px"
+                        height="24px"
+                        fill="currentColor"
+                        viewBox="0 0 256 256"
+                      >
+                        <path
+                          d="M174,47.75a254.19,254.19,0,0,0-41.45-38.3,8,8,0,0,0-9.18,0A254.19,254.19,0,0,0,82,47.75C54.51,79.32,40,112.6,40,144a88,88,0,0,0,176,0C216,112.6,201.49,79.32,174,47.75ZM128,216a72.08,72.08,0,0,1-72-72c0-57.23,55.47-105,72-118,16.53,13,72,60.75,72,118A72.08,72.08,0,0,1,128,216Zm55.89-62.66a57.6,57.6,0,0,1-46.56,46.55A8.75,8.75,0,0,1,136,200a8,8,0,0,1-1.32-15.89c16.57-2.79,30.63-16.85,33.44-33.45a8,8,0,0,1,15.78,2.68Z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <p
+                      class="text-sm font-bold leading-normal tracking-[0.015em]"
+                    >
+                      Irrigation
+                    </p>
+                  </a>
+                  </div>
+              </div>
+
+              <h2
+                class="px-4 pb-3 pt-5 text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-white"
+              >
+                Detailed Information
+              </h2>
+              <div class="space-y-8 p-4">
+                <div class="p-4 @container">
+                  <div
+                    class="flex flex-col items-stretch justify-start rounded-lg @xl:flex-row @xl:items-start"
+                  >
+                    <div
+                      class="aspect-video w-full rounded-lg bg-cover bg-center bg-no-repeat"
+                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDOpux7yUQ9cC91Hlgvz0Ck9l-6XMc_jrCoM8clnyEJXgJB4vmvTlPkVhmp2OT1Z66IGjli_3v0zUQSA8CwUcdnZVYxRGytFlw7AljEXMq_O_7VcIPcmHRfHNhEcOfh9yuj9VQH2p_-UDv_pheMh7hMuHh3VJihxP6I0np3VzR7OO3wY5rCrA6UnP39-v8tTySDJbL5T1BP_Xg1oBBf7z52jVqch6E_mlbgwQlvCYwkZk_AQWsUtz9tJaxeUAU8Lu7h6kaiqsR0c7m8");'
+                    ></div>
+                    <div
+                      class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4"
+                    >
+                      <p
+                        class="text-sm font-normal leading-normal text-primary/80"
+                      >
+                        Weather Updates
+                      </p>
+                      <p
+                        class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-white"
+                      >
+                        Stay Ahead with Real-Time Weather Forecasts
+                      </p>
+                      <p
+                        class="text-base font-normal leading-normal text-text-light/80 dark:text-text-dark/80"
+                      >
+                        Get accurate weather forecasts tailored to your farm's
+                        location. Plan your activities effectively with hourly
+                        and daily updates, including temperature, rainfall, and
+                        wind conditions.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-4 @container">
+                  <div
+                    class="flex flex-col items-stretch justify-start rounded-lg @xl:flex-row @xl:items-start"
+                  >
+                    <div
+                      class="aspect-video w-full rounded-lg bg-cover bg-center bg-no-repeat"
+                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5yI1a9o_td3DOz9MKT0H60kQnsXaVtdtXTcQH8HMcMc7c_GNWZUXas-5KDSt5TKM81tdWukrJJoeFYa0YMliuRCuX471LgsTw-Pbyf3gssDtYbGQ8ab2xrqQSqawDR5pSmRkwZb-sNivBv4ESi75Yd55aSeyCW9wM6E60_9ilwjVVzHDIBcMBWj4-yADXuNuUsFZKei3fv7MEMotCiA5RylXz49x5_850zQEzknUP1a-Y2D9K0Dy-gGJnNxGyWdQqUuFW1X6LYbXv");'
+                    ></div>
+                    <div
+                      class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4"
+                    >
+                      <p
+                        class="text-sm font-normal leading-normal text-primary/80"
+                      >
+                        Crop Management
+                      </p>
+                      <p
+                        class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-white"
+                      >
+                        Optimize Your Crop Health and Yield
+                      </p>
+                      <p
+                        class="text-base font-normal leading-normal text-text-light/80 dark:text-text-dark/80"
+                      >
+                        Manage your crops efficiently with our comprehensive
+                        tools. Track growth stages, monitor health, and receive
+                        alerts for potential issues. Get personalized
+                        recommendations for fertilization and pest control.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-4 @container">
+                  <div
+                    class="flex flex-col items-stretch justify-start rounded-lg @xl:flex-row @xl:items-start"
+                  >
+                    <div
+                      class="aspect-video w-full rounded-lg bg-cover bg-center bg-no-repeat"
+                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQzBo1P839tXBelV4R8Bq0hEe2Oz6kjX1WCYdA3CMbrR54vsQy_FFNSRA9scRnxUT6eDCP1-3XRBgxG9lEylV4zLWduTxZTvpZhIiIKozjc-gxjiBRmiLBVHeScXRbr4WvBe1F6bbhGfVCpBkwMoTHMUrQhmH3qSPAEA-JUvBgpM3Rq02G7Zbls5aV-PvadZ2A5rVaLQq34Qo4yu2Onla_8Mdb-GfNPcC1gxIhhnmeseEXBZBLljKU6nAg1grkj0ibOJOTOvTxMURR");'
+                    ></div>
+                    <div
+                      class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4"
+                    >
+                      <p
+                        class="text-sm font-normal leading-normal text-primary/80"
+                      >
+                        Irrigation Management
+                      </p>
+                      <p
+                        class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-white"
+                      >
+                        Efficiently Manage Your Water Resources
+                      </p>
+                      <p
+                        class="text-base font-normal leading-normal text-text-light/80 dark:text-text-dark/80"
+                      >
+                        Optimize your irrigation schedule with our smart tools.
+                        Monitor soil moisture levels, control irrigation systems
+                        remotely, and receive alerts for leaks or
+                        inefficiencies. Save water and improve crop yield.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+               <div class="p-4 @container">
+              <div class="flex flex-col items-stretch justify-start rounded-lg @xl:flex-row @xl:items-start">
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAUWAkuIfnwwDdjgdUnnZBEt_AgM1CdpWdQDMdDqvX9OgyjUhdnF6pvJqK0DxRnmwBJCx3oqRCIw7ilMf8pM3ROoLGeaAIrG7cGQpKSo1w27wuD6-Pzx8IreDV7GprjUd5_smmip-iLrILSkQCngz_ksgp-54HrMHMhLtZM7TOa6Dhv0pdDDeAsHXBYbdkxilaMjjrUAEWwuaHT6H9neFwoRkAEZNFGLYkEAAkDGBq0y1O5OBWuNuzFqyTbEYEIUW-00nm_VhzItOSr");'
+                ></div>
+                <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
+                  <p class="text-sm font-normal leading-normal text-primary/80">Community Support</p>
+                  <p class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-white">Connect and Collaborate with Fellow Farmers</p>
+                  <div class="flex items-end gap-3 justify-between">
+                    <p class="text-base font-normal leading-normal text-text-light/80 dark:text-text-dark/80">
+                      Join our vibrant community of farmers to share knowledge, ask questions, and collaborate on solutions. Participate in discussions, attend virtual events, and
+                      learn from experienced farmers.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+              <h2
+                class="px-4 pb-3 pt-5 text-[22px] font-bold leading-tight tracking-[-0.015em] text-text-light dark:text-white"
+              >
+                Crop Market Prices
+              </h2>
+              <div class="px-4 py-3">
+                <label class="flex h-12 w-full min-w-40 flex-col">
+                  <div class="flex h-full w-full flex-1 items-stretch rounded-lg">
+                    <div
+                      class="flex items-center justify-center rounded-l-lg border-r-0 border-none bg-primary/10 pl-4 text-primary"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24px"
+                        height="24px"
+                        fill="currentColor"
+                        viewBox="0 0 256 256"
+                      >
+                        <path
+                          d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <input
+                      placeholder="Search for crop, vegetable, or fruit prices"
+                      class="form-input h-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg rounded-l-none border-l-0 border-none bg-primary/10 px-4 pl-2 text-base font-normal leading-normal text-text-light placeholder:text-primary/70 focus:border-none focus:outline-0 focus:ring-0 dark:text-text-dark"
+                      value=""
+                    />
+                  </div>
+                </label>
+              </div>
+
+              <div class="flex flex-wrap gap-4 px-4 py-6">
+                <div
+                  class="flex min-w-72 flex-1 flex-col gap-2 rounded-lg border border-primary/20 p-6"
+                >
+                  <p
+                    class="text-base font-medium leading-normal text-text-light dark:text-white"
+                  >
+                    Tomato Prices (Local Mandi)
+                  </p>
+                  <p
+                      id="market-price-value"
+                      class="truncate text-[16px] font-bold leading-tight tracking-light text-text-light dark:text-white"
+                      style="font-size: 1rem;"
+                    >
+                      ₹35/kg
+                    </p>
+                  <div class="flex gap-1">
+                    <p
+                      class="text-base font-normal leading-normal text-text-light/70 dark:text-text-dark/70"
+                    >
+                      Last 7 Days
+                    </p>
+                    <p class="text-base font-medium leading-normal text-primary">
+                      +5%
+                    </p>
+                  </div>
+                  <div class="flex min-h-[180px] flex-1 flex-col gap-8 py-4">
+                    <svg
+                      width="100%"
+                      height="148"
+                      viewBox="-3 0 478 150"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V149H326.769H0V109Z"
+                        fill="url(#priceChartGradient)"
+                      ></path>
+                      <path
+                        d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25"
+                        stroke="#4ade80"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                      ></path>
+                      <defs>
+                        <linearGradient
+                          id="priceChartGradient"
+                          x1="236"
+                          y1="1"
+                          x2="236"
+                          y2="149"
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop stop-color="#4ade80" stop-opacity="0.2"></stop>
+                          <stop
+                            offset="1"
+                            stop-color="#4ade80"
+                            stop-opacity="0"
+                          ></stop>
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div
+                      class="flex justify-around text-[13px] font-bold leading-normal tracking-[0.015em] text-text-light/70 dark:text-text-dark/70"
+                    >
+                      <p>Mon</p>
+                      <p>Tue</p>
+                      <p>Wed</p>
+                      <p>Thu</p>
+                      <p>Fri</p>
+                      <p>Sat</p>
+                      <p>Sun</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+               <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">About Us</h2>
+                <p class="text-text-dark/80 text-base font-normal leading-normal pb-3 pt-1 px-4 text-center">
+                  KisanMitra is dedicated to empowering farmers with the tools and knowledge they need to succeed. Our mission is to bridge the gap between technology and agriculture,
+                  providing innovative solutions that enhance productivity, sustainability, and profitability. We are committed to supporting farmers every step of the way, from
+                  planning to harvest to cultivation.
+                </p>
+                <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Contact Us</h2>
+                <p class="text-text-dark/80 text-base font-normal leading-normal pb-3 pt-1 px-4 text-center">
+                  For any inquiries or support, please reach out to us at support@kisanmitra.com or call us at 920-7879-485
+                </p>
+            </div>
+          </div>
+          </main>
+      </div>
+    </div>
+     <div id="chatbot-modal" class="chatbot-modal">
+      <div class="chatbot-header">
+        <span>KisanGPT</span>
+        <button class="chatbot-close" onclick="toggleChatbot()">&times;</button>
+      </div>
+      <div id="chatbot-messages" class="chatbot-messages">
+        <div class="chatbot-bubble bot">
+          Hi! 👋 I am KisanMitra, your assistant for crop and agriculture questions. Ask me about crop info, diseases, weather, market rates, and more!
+        </div>
+      </div>
+      <form id="chatbot-form" class="chatbot-input-container" autocomplete="off">
+        <input
+          id="chatbot-input"
+          class="chatbot-input"
+          autocomplete="off"
+          type="text"
+          placeholder="Ask about crops, farming..."
+          required
+        />
+        <button type="submit" class="chatbot-send-btn">&#9658;</button>
+      </form>
+    </div>
+     <script src="main.js"></script>
+</body>
+<script>
+// Simple translation dictionary for demonstration
+const translations = {
+  en: {
+    welcome: "Welcome, Farmer!",
+    subtitle: "Your personal farming assistant.",
+    cropAdvice: "Crop Advice",
+    cropAdviceDesc: "Personalized crop recommendations.",
+    marketPrices: "Market Prices",
+    marketPricesDesc: "Latest market price updates.",
+    weatherUpdates: "Weather Updates",
+    weatherUpdatesDesc: "Real-time weather forecasts.",
+    diseaseDetection: "Disease Detection",
+    diseaseDetectionDesc: "Identify and correct crop diseases.",
+    schemes: "Schemes",
+    schemesDesc: "Find relevant government schemes for you.",
+    helpline: "Helpline",
+    helplineDesc: "Get support from our experts.",
+    quickAccess: "Quick Access Panel",
+    weather: "Weather",
+    cropManagement: "Crop Management",
+    irrigation: "Irrigation",
+    detailedInfo: "Detailed Information",
+    weatherTitle: "Stay Ahead with Real-Time Weather Forecasts",
+    weatherBody: "Get accurate weather forecasts tailored to your farm's location. Plan your activities effectively with hourly and daily updates, including temperature, rainfall, and wind conditions.",
+    cropMgmtTitle: "Optimize Your Crop Health and Yield",
+    cropMgmtBody: "Manage your crops efficiently with our comprehensive tools. Track growth stages, monitor health, and receive alerts for potential issues. Get personalized recommendations for fertilization and pest control.",
+    irrigationTitle: "Efficiently Manage Your Water Resources",
+    irrigationBody: "Optimize your irrigation schedule with our smart tools. Monitor soil moisture levels, control irrigation systems remotely, and receive alerts for leaks or inefficiencies. Save water and improve crop yield.",
+    communitySupport: "Community Support",
+    communityTitle: "Connect and Collaborate with Fellow Farmers",
+    communityBody: "Join our vibrant community of farmers to share knowledge, ask questions, and collaborate on solutions. Participate in discussions, attend virtual events, and learn from experienced farmers.",
+    cropMarket: "Crop Market Prices",
+    tomatoPrices: "Tomato Prices (Local Mandi)",
+    last7Days: "Last 7 Days",
+    aboutUs: "About Us",
+    aboutBody: "KisanMitra is dedicated to empowering farmers with the tools and knowledge they need to succeed. Our mission is to bridge the gap between technology and agriculture, providing innovative solutions that enhance productivity, sustainability, and profitability. We are committed to supporting farmers every step of the way, from planning to harvest to cultivation.",
+    contactUs: "Contact Us",
+    contactBody: "For any inquiries or support, please reach out to us at support@kisanmitra.com or call us at 920-7879-485"
+  },
+  ml: {
+    welcome: "സ്വാഗതം, അർജുൻ!",
+    subtitle: "നിങ്ങളുടെ വ്യക്തിഗത കൃഷി സഹായി.",
+    cropAdvice: "വിള നിർദ്ദേശങ്ങൾ",
+    cropAdviceDesc: "വ്യക്തിഗത വിള നിർദ്ദേശങ്ങൾ.",
+    marketPrices: "മാർക്കറ്റ് വിലകൾ",
+    marketPricesDesc: "പുതിയ മാർക്കറ്റ് വില അപ്ഡേറ്റുകൾ.",
+    weatherUpdates: "കാലാവസ്ഥാ അപ്ഡേറ്റുകൾ",
+    weatherUpdatesDesc: "തത്സമയ കാലാവസ്ഥാ പ്രവചനങ്ങൾ.",
+    diseaseDetection: "രോഗം കണ്ടെത്തൽ",
+    diseaseDetectionDesc: "വിള രോഗങ്ങൾ തിരിച്ചറിയുക.",
+    schemes: "പദ്ധതികൾ",
+    schemesDesc: "നിങ്ങൾക്ക് അനുയോജ്യമായ സർക്കാർ പദ്ധതികൾ കണ്ടെത്തുക.",
+    helpline: "ഹെൽപ് ലൈൻ",
+    helplineDesc: "ഞങ്ങളുടെ വിദഗ്ധരിൽ നിന്ന് സഹായം നേടുക.",
+    quickAccess: "ക്വിക്ക് ആക്സസ് പാനൽ",
+    weather: "കാലാവസ്ഥ",
+    cropManagement: "വിള മാനേജ്മെന്റ്",
+    irrigation: "നീരാവലി",
+    detailedInfo: "വിശദമായ വിവരങ്ങൾ",
+    weatherTitle: "തത്സമയ കാലാവസ്ഥാ പ്രവചനങ്ങളോടെ മുന്നോട്ട് പോവുക",
+    weatherBody: "നിങ്ങളുടെ ഫാമിന്റെ ലൊക്കേഷനിൽ അനുയോജ്യമായ കാലാവസ്ഥാ പ്രവചനങ്ങൾ നേടുക. മണിക്കൂറും ദിവസവും അപ്ഡേറ്റുകൾ, താപനില, മഴ, കാറ്റ് എന്നിവ ഉൾപ്പെടുന്നു.",
+    cropMgmtTitle: "നിങ്ങളുടെ വിളാരോഗ്യവും വിളവുമുയർത്തുക",
+    cropMgmtBody: "നമ്മുടെ സമഗ്ര ഉപകരണങ്ങളിലൂടെ വിളകൾ ഫലപ്രദമായി മാനേജ് ചെയ്യുക. വളർച്ചാ ഘട്ടങ്ങൾ ട്രാക്ക് ചെയ്യുക, ആരോഗ്യനില നിരീക്ഷിക്കുക, പ്രശ്നങ്ങൾക്കുള്ള അലർട്ടുകൾ നേടുക. വളവും കീടനാശിനി നിർദ്ദേശങ്ങളും ലഭിക്കും.",
+    irrigationTitle: "നിങ്ങളുടെ ജല വിഭവങ്ങൾ ഫലപ്രദമായി മാനേജ് ചെയ്യുക",
+    irrigationBody: "സ്മാർട്ട് ഉപകരണങ്ങളിലൂടെ നീരാവലി ഷെഡ്യൂൾ ഓപ്റ്റിമൈസ് ചെയ്യുക. മണ്ണിലെ ഈർപ്പം നിരീക്ഷിക്കുക, നീരാവലി സിസ്റ്റങ്ങൾ റിമോട്ട് ആയി നിയന്ത്രിക്കുക, ചോർച്ചകൾക്കും അക്ഷമതകൾക്കും അലർട്ട് ലഭിക്കും. ജലം സംരക്ഷിക്കുകയും വിളവുയർത്തുകയും ചെയ്യുക.",
+    communitySupport: "സമൂഹ പിന്തുണ",
+    communityTitle: "കർഷകരുമായി ബന്ധപ്പെടുക, സഹകരിക്കുക",
+    communityBody: "അനുഭവ സമ്പന്നരായ കർഷകരിൽ നിന്ന് പഠിക്കുക, ചോദ്യങ്ങൾ ചോദിക്കുക, പരിഹാരങ്ങൾ പങ്കിടുക. ചർച്ചകളിൽ പങ്കെടുക്കുക, വെർച്വൽ ഇവന്റുകളിൽ പങ്കെടുക്കുക.",
+    cropMarket: "വിള മാർക്കറ്റ് വിലകൾ",
+    tomatoPrices: "തക്കാളി വില (ലോകൽ മണ്ടി)",
+    last7Days: "കഴിഞ്ഞ 7 ദിവസം",
+    aboutUs: "ഞങ്ങളേക്കുറിച്ച്",
+    aboutBody: "കർഷകർക്ക് വിജയിക്കാൻ ആവശ്യമായ ഉപകരണങ്ങളും അറിവും നൽകുകയാണ് കിസാൻമിത്രയുടെ ലക്ഷ്യം. സാങ്കേതികവിദ്യയും കൃഷിയും തമ്മിലുള്ള അന്തരം കുറയ്ക്കുക, ഉൽപ്പാദനക്ഷമതയും സ്ഥിരതയും ലാഭവും വർദ്ധിപ്പിക്കാൻ നവീനമായ പരിഹാരങ്ങൾ നൽകുക. പദ്ധതനത്തിൽ നിന്ന് വിളവെടുപ്പിലേക്കും കൃഷിയിലേക്കും കർഷകരെ പിന്തുണയ്ക്കുകയാണ് ഞങ്ങളുടെ പ്രതിജ്ഞ.",
+    contactUs: "ബന്ധപ്പെടുക",
+    contactBody: "ഏതെങ്കിലും സംശയങ്ങൾക്കോ സഹായത്തിനോ support@kisanmitra.com എന്ന വിലാസത്തിൽ ഞങ്ങളെ ബന്ധപ്പെടുക അല്ലെങ്കിൽ 920-7879-485 എന്ന നമ്പറിൽ വിളിക്കുക."
+  },
+  hi: {
+    welcome: "स्वागत है, किसान!",
+    subtitle: "आपका व्यक्तिगत कृषि सहायक।",
+    cropAdvice: "फसल सलाह",
+    cropAdviceDesc: "व्यक्तिगत फसल सिफारिशें।",
+    marketPrices: "बाजार भाव",
+    marketPricesDesc: "नवीनतम बाजार मूल्य अपडेट।",
+    weatherUpdates: "मौसम अपडेट",
+    weatherUpdatesDesc: "रीयल-टाइम मौसम पूर्वानुमान।",
+    diseaseDetection: "रोग पहचान",
+    diseaseDetectionDesc: "फसल रोगों की पहचान करें।",
+    schemes: "योजनाएँ",
+    schemesDesc: "आपके लिए उपयुक्त सरकारी योजनाएँ खोजें।",
+    helpline: "हेल्पलाइन",
+    helplineDesc: "हमारे विशेषज्ञों से सहायता प्राप्त करें।",
+    quickAccess: "त्वरित पहुँच पैनल",
+    weather: "मौसम",
+    cropManagement: "फसल प्रबंधन",
+    irrigation: "सिंचाई",
+    detailedInfo: "विस्तृत जानकारी",
+    weatherTitle: "रीयल-टाइम मौसम पूर्वानुमान के साथ आगे रहें",
+    weatherBody: "अपने खेत के स्थान के अनुसार सटीक मौसम पूर्वानुमान प्राप्त करें। तापमान, वर्षा, और हवा की स्थिति सहित प्रति घंटा और दैनिक अपडेट के साथ अपनी गतिविधियों की योजना बनाएं।",
+    cropMgmtTitle: "अपनी फसल का स्वास्थ्य और उपज बढ़ाएँ",
+    cropMgmtBody: "हमारे व्यापक उपकरणों के साथ अपनी फसलों का कुशलतापूर्वक प्रबंधन करें। वृद्धि चरणों को ट्रैक करें, स्वास्थ्य की निगरानी करें, और संभावित समस्याओं के लिए अलर्ट प्राप्त करें। उर्वरक और कीट नियंत्रण के लिए व्यक्तिगत सिफारिशें प्राप्त करें।",
+    irrigationTitle: "अपने जल संसाधनों का कुशल प्रबंधन करें",
+    irrigationBody: "हमारे स्मार्ट टूल्स के साथ अपनी सिंचाई अनुसूची को अनुकूलित करें। मिट्टी की नमी के स्तर की निगरानी करें, सिंचाई प्रणालियों को दूरस्थ रूप से नियंत्रित करें, और रिसाव या अक्षमताओं के लिए अलर्ट प्राप्त करें। पानी बचाएँ और फसल की उपज बढ़ाएँ।",
+    communitySupport: "समुदाय समर्थन",
+    communityTitle: "अन्य किसानों से जुड़ें और सहयोग करें",
+    communityBody: "अनुभवी किसानों से सीखें, प्रश्न पूछें, समाधान साझा करें। चर्चाओं में भाग लें, वर्चुअल इवेंट्स में भाग लें।",
+    cropMarket: "फसल बाजार भाव",
+    tomatoPrices: "टमाटर भाव (स्थानीय मंडी)",
+    last7Days: "पिछले 7 दिन",
+    aboutUs: "हमारे बारे में",
+    aboutBody: "किसानमित्र किसानों को सफल होने के लिए आवश्यक उपकरण और ज्ञान प्रदान करने के लिए समर्पित है। हमारा मिशन तकनीक और कृषि के बीच की खाई को पाटना है, जिससे उत्पादकता, स्थिरता और लाभप्रदता बढ़े। हम किसानों को योजना से लेकर कटाई और खेती तक हर कदम पर समर्थन देने के लिए प्रतिबद्ध हैं।",
+    contactUs: "संपर्क करें",
+    contactBody: "किसी भी पूछताछ या सहायता के लिए, कृपया support@kisanmitra.com पर हमसे संपर्क करें या 920-7879-485 पर कॉल करें।"
+  },
+  pa: {
+    welcome: "ਸੁਆਗਤ ਹੈ, ਕਿਸਾਨ.!",
+    subtitle: "ਤੁਹਾਡਾ ਨਿੱਜੀ ਖੇਤੀ ਸਹਾਇਕ।",
+    cropAdvice: "ਫਸਲ ਸਲਾਹ",
+    cropAdviceDesc: "ਨਿੱਜੀ ਫਸਲ ਸਿਫਾਰਸ਼ਾਂ।",
+    marketPrices: "ਬਾਜ਼ਾਰ ਕੀਮਤਾਂ",
+    marketPricesDesc: "ਤਾਜ਼ਾ ਬਾਜ਼ਾਰ ਕੀਮਤ ਅੱਪਡੇਟ।",
+    weatherUpdates: "ਮੌਸਮ ਅੱਪਡੇਟ",
+    weatherUpdatesDesc: "ਰੀਅਲ-ਟਾਈਮ ਮੌਸਮ ਦੀ ਜਾਣਕਾਰੀ।",
+    diseaseDetection: "ਬਿਮਾਰੀ ਪਛਾਣ",
+    diseaseDetectionDesc: "ਫਸਲ ਬਿਮਾਰੀਆਂ ਦੀ ਪਛਾਣ ਕਰੋ।",
+    schemes: "ਯੋਜਨਾਵਾਂ",
+    schemesDesc: "ਤੁਹਾਡੇ ਲਈ ਉਚਿਤ ਸਰਕਾਰੀ ਯੋਜਨਾਵਾਂ ਲੱਭੋ।",
+    helpline: "ਹੈਲਪਲਾਈਨ",
+    helplineDesc: "ਸਾਡੇ ਮਾਹਿਰਾਂ ਤੋਂ ਮਦਦ ਲਵੋ।",
+    quickAccess: "ਤੁਰੰਤ ਪਹੁੰਚ ਪੈਨਲ",
+    weather: "ਮੌਸਮ",
+    cropManagement: "ਫਸਲ ਪ੍ਰਬੰਧਨ",
+    irrigation: "ਸਿੰਚਾਈ",
+    detailedInfo: "ਵੇਰਵਾ ਜਾਣਕਾਰੀ",
+    weatherTitle: "ਰੀਅਲ-ਟਾਈਮ ਮੌਸਮ ਦੀ ਜਾਣਕਾਰੀ ਨਾਲ ਅੱਗੇ ਰਹੋ",
+    weatherBody: "ਆਪਣੇ ਖੇਤ ਦੀ ਸਥਿਤੀ ਅਨੁਸਾਰ ਸਹੀ ਮੌਸਮ ਦੀ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ। ਘੰਟਾਵਾਰੀ ਅਤੇ ਰੋਜ਼ਾਨਾ ਅੱਪਡੇਟ, ਤਾਪਮਾਨ, ਵਰਖਾ ਅਤੇ ਹਵਾ ਦੀ ਸਥਿਤੀ ਸਮੇਤ ਆਪਣੀਆਂ ਗਤੀਵਿਧੀਆਂ ਦੀ ਯੋਜਨਾ ਬਣਾਓ।",
+    cropMgmtTitle: "ਆਪਣੀ ਫਸਲ ਦੀ ਸਿਹਤ ਅਤੇ ਪੈਦਾਵਾਰ ਵਧਾਓ",
+    cropMgmtBody: "ਸਾਡੇ ਵਿਸ਼ਤਾਰਕ ਉਪਕਰਨਾਂ ਨਾਲ ਆਪਣੀਆਂ ਫਸਲਾਂ ਨੂੰ ਪ੍ਰਭਾਵਸ਼ਾਲੀ ਢੰਗ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ। ਵਾਧੂ ਪੜਾਅ ਟਰੈਕ ਕਰੋ, ਸਿਹਤ ਦੀ ਨਿਗਰਾਨੀ ਕਰੋ, ਅਤੇ ਸੰਭਾਵੀ ਸਮੱਸਿਆਵਾਂ ਲਈ ਚੇਤਾਵਨੀ ਪ੍ਰਾਪਤ ਕਰੋ। ਖਾਦ ਅਤੇ ਕੀਟ ਨਿਯੰਤਰਣ ਲਈ ਨਿੱਜੀ ਸਿਫਾਰਸ਼ਾਂ ਪ੍ਰਾਪਤ ਕਰੋ।",
+    irrigationTitle: "ਆਪਣੇ ਪਾਣੀ ਦੇ ਸਰੋਤਾਂ ਦਾ ਪ੍ਰਭਾਵਸ਼ਾਲੀ ਪ੍ਰਬੰਧਨ ਕਰੋ",
+    irrigationBody: "ਸਾਡੇ ਸਮਾਰਟ ਟੂਲਾਂ ਨਾਲ ਆਪਣੀ ਸਿੰਚਾਈ ਅਨੁਸੂਚੀ ਨੂੰ ਅਨੁਕੂਲ ਬਣਾਓ। ਮਿੱਟੀ ਦੀ ਨਮੀ ਦੀ ਪੱਧਰ ਦੀ ਨਿਗਰਾਨੀ ਕਰੋ, ਸਿੰਚਾਈ ਪ੍ਰਣਾਲੀਆਂ ਨੂੰ ਦੂਰੋਂ ਕੰਟਰੋਲ ਕਰੋ, ਅਤੇ ਲੀਕ ਜਾਂ ਅਕਸ਼ਮਤਾਵਾਂ ਲਈ ਚੇਤਾਵਨੀ ਪ੍ਰਾਪਤ ਕਰੋ। ਪਾਣੀ ਬਚਾਓ ਅਤੇ ਫਸਲ ਦੀ ਪੈਦਾਵਾਰ ਵਧਾਓ।",
+    communitySupport: "ਕਮਿਊਨਿਟੀ ਸਹਾਇਤਾ",
+    communityTitle: "ਹੋਰ ਕਿਸਾਨਾਂ ਨਾਲ ਜੁੜੋ ਅਤੇ ਸਹਿਯੋਗ ਕਰੋ",
+    communityBody: "ਅਨੁਭਵੀ ਕਿਸਾਨਾਂ ਤੋਂ ਸਿੱਖੋ, ਸਵਾਲ ਪੁੱਛੋ, ਹੱਲ ਸਾਂਝੇ ਕਰੋ। ਚਰਚਾਵਾਂ ਵਿੱਚ ਭਾਗ ਲਵੋ, ਵਰਚੁਅਲ ਇਵੈਂਟਾਂ ਵਿੱਚ ਭਾਗ ਲਵੋ।",
+    cropMarket: "ਫਸਲ ਬਾਜ਼ਾਰ ਕੀਮਤਾਂ",
+    tomatoPrices: "ਟਮਾਟਰ ਕੀਮਤ (ਲੋਕਲ ਮੰਡੀ)",
+    last7Days: "ਪਿਛਲੇ 7 ਦਿਨ",
+    aboutUs: "ਸਾਡੇ ਬਾਰੇ",
+    aboutBody: "ਕਿਸਾਨਮਿਤਰ ਕਿਸਾਨਾਂ ਨੂੰ ਕਾਮਯਾਬ ਹੋਣ ਲਈ ਲੋੜੀਂਦੇ ਉਪਕਰਨ ਅਤੇ ਗਿਆਨ ਪ੍ਰਦਾਨ ਕਰਨ ਲਈ ਸਮਰਪਿਤ ਹੈ। ਸਾਡਾ ਮਿਸ਼ਨ ਤਕਨਾਲੋਜੀ ਅਤੇ ਖੇਤੀਬਾੜੀ ਵਿਚਕਾਰ ਦੀ ਖਾਈ ਨੂੰ ਪੂਰਾ ਕਰਨਾ ਹੈ, ਉਤਪਾਦਕਤਾ, ਟਿਕਾਊਪਨ ਅਤੇ ਲਾਭਕਾਰੀਤਾ ਨੂੰ ਵਧਾਉਣਾ। ਅਸੀਂ ਕਿਸਾਨਾਂ ਨੂੰ ਯੋਜਨਾ ਬਣਾਉਣ ਤੋਂ ਲੈ ਕੇ ਕਟਾਈ ਅਤੇ ਖੇਤੀ ਤੱਕ ਹਰ ਕਦਮ 'ਤੇ ਸਹਿਯੋਗ ਦੇਣ ਲਈ ਵਚਨਬੱਧ ਹਾਂ।",
+    contactUs: "ਸਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੋ",
+    contactBody: "ਕਿਸੇ ਵੀ ਪੁੱਛਗਿੱਛ ਜਾਂ ਮਦਦ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ support@kisanmitra.com 'ਤੇ ਸਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੋ ਜਾਂ 920-7879-485 'ਤੇ ਕਾਲ ਕਰੋ।"
+  }
+};
+
+function getSelectedLanguage() {
+  // Try to get from localStorage, fallback to English
+  return localStorage.getItem('selectedLanguage') || 'en';
+}
+
+function translatePage() {
+  const lang = getSelectedLanguage();
+  const t = translations[lang] || translations['en'];
+
+  // Map of selectors to translation keys
+  const map = [
+    { sel: 'h2.text-4xl', key: 'welcome' },
+    { sel: 'p.mt-4', key: 'subtitle' },
+    { sel: '.quick-access-button:nth-child(1) span:last-child', key: 'chat' },
+    { sel: '.quick-access-button:nth-child(2) span:last-child', key: 'analyze' },
+    { sel: '.quick-access-button:nth-child(3) span:last-child', key: 'weather' },
+    { sel: '.quick-access-button:nth-child(4) span:last-child', key: 'marketPrices' },
+    { sel: '.quick-access-button:nth-child(5) span:last-child', key: 'connect' },
+    { sel: '.group.card-glow:nth-child(1) h3', key: 'cropAdvice' },
+    { sel: '.group.card-glow:nth-child(1) p.mt-1', key: 'cropAdviceDesc' },
+    { sel: '.group.card-glow:nth-child(2) h3', key: 'marketPrices' },
+    { sel: '.group.card-glow:nth-child(2) p.mt-1', key: 'marketPricesDesc' },
+    { sel: '.group.card-glow:nth-child(3) h3', key: 'weatherUpdates' },
+    { sel: '.group.card-glow:nth-child(3) p.mt-1', key: 'weatherUpdatesDesc' },
+    { sel: '.group.card-glow:nth-child(4) h3', key: 'diseaseDetection' },
+    { sel: '.group.card-glow:nth-child(4) p.mt-1', key: 'diseaseDetectionDesc' },
+    { sel: '.group.card-glow:nth-child(5) h3', key: 'schemes' },
+    { sel: '.group.card-glow:nth-child(5) p.mt-1', key: 'schemesDesc' },
+    { sel: '.group.card-glow:nth-child(6) h3', key: 'helpline' },
+    { sel: '.group.card-glow:nth-child(6) p.mt-1', key: 'helplineDesc' },
+    { sel: 'h2.px-4.pb-3.pt-5', key: 'quickAccess' },
+    { sel: '.flex.gap-8.border-b a:nth-child(1) p', key: 'weather' },
+    { sel: '.flex.gap-8.border-b a:nth-child(2) p', key: 'cropManagement' },
+    { sel: '.flex.gap-8.border-b a:nth-child(3) p', key: 'irrigation' },
+    { sel: 'h2.px-4.pb-3.pt-5 + div.space-y-8 + h2', key: 'detailedInfo' },
+    { sel: '.space-y-8 .p-4:nth-child(1) p.text-sm', key: 'weatherUpdates' },
+    { sel: '.space-y-8 .p-4:nth-child(1) p.text-lg', key: 'weatherTitle' },
+    { sel: '.space-y-8 .p-4:nth-child(1) p.text-base', key: 'weatherBody' },
+    { sel: '.space-y-8 .p-4:nth-child(2) p.text-sm', key: 'cropManagement' },
+    { sel: '.space-y-8 .p-4:nth-child(2) p.text-lg', key: 'cropMgmtTitle' },
+    { sel: '.space-y-8 .p-4:nth-child(2) p.text-base', key: 'cropMgmtBody' },
+    { sel: '.space-y-8 .p-4:nth-child(3) p.text-sm', key: 'irrigation' },
+    { sel: '.space-y-8 .p-4:nth-child(3) p.text-lg', key: 'irrigationTitle' },
+    { sel: '.space-y-8 .p-4:nth-child(3) p.text-base', key: 'irrigationBody' },
+    { sel: '.p-4.@container .flex.flex-col.items-stretch.justify-start.rounded-lg.@xl\\:flex-row.@xl\\:items-start + h2', key: 'communitySupport' },
+    { sel: '.p-4.@container .flex.flex-col.items-stretch.justify-start.rounded-lg.@xl\\:flex-row.@xl\\:items-start + h2 + div .flex.flex-col.items-stretch.justify-center.gap-1.py-4.@xl\\:px-4 p.text-lg', key: 'communityTitle' },
+    { sel: '.p-4.@container .flex.flex-col.items-stretch.justify-start.rounded-lg.@xl\\:flex-row.@xl\\:items-start + h2 + div .flex.flex-col.items-stretch.justify-center.gap-1.py-4.@xl\\:px-4 p.text-base', key: 'communityBody' },
+    { sel: 'h2.text-white.text-[22px]:nth-of-type(1)', key: 'cropMarket' },
+    { sel: '.flex.flex-wrap.gap-4 .text-base.font-medium', key: 'tomatoPrices' },
+    { sel: '.flex.flex-wrap.gap-4 .flex.gap-1 .text-base.font-normal', key: 'last7Days' },
+    { sel: 'h2.text-white.text-[22px]:nth-of-type(2)', key: 'aboutUs' },
+    { sel: 'p.text-text-dark\/80.text-base.font-normal.leading-normal.pb-3.pt-1.px-4.text-center:nth-of-type(1)', key: 'aboutBody' },
+    { sel: 'h2.text-white.text-[22px]:nth-of-type(3)', key: 'contactUs' },
+    { sel: 'p.text-text-dark\/80.text-base.font-normal.leading-normal.pb-3.pt-1.px-4.text-center:nth-of-type(2)', key: 'contactBody' }
+  ];
+
+  // Custom translation for quick access buttons
+  const quickAccess = [
+    { sel: '.quick-access-button:nth-child(1) span:last-child', key: 'chat', fallback: { en: 'Chat', ml: 'ചാറ്റ്', hi: 'चैट', pa: 'ਚੈਟ' } },
+    { sel: '.quick-access-button:nth-child(2) span:last-child', key: 'analyze', fallback: { en: 'Analyze', ml: 'വിശകലനം', hi: 'विश्लेषण', pa: 'ਵਿਸ਼ਲੇਸ਼ਣ' } },
+    { sel: '.quick-access-button:nth-child(3) span:last-child', key: 'weather', fallback: { en: 'Weather', ml: 'കാലാവസ്ഥ', hi: 'मौसम', pa: 'ਮੌਸਮ' } },
+    { sel: '.quick-access-button:nth-child(4) span:last-child', key: 'marketPrices', fallback: { en: 'Market', ml: 'മാർക്കറ്റ്', hi: 'बाजार', pa: 'ਬਾਜ਼ਾਰ' } },
+    { sel: '.quick-access-button:nth-child(5) span:last-child', key: 'connect', fallback: { en: 'Connect', ml: 'കണക്ട്', hi: 'कनेक्ट', pa: 'ਕਨੈਕਟ' } }
+  ];
+
+  // Set quick access button translations
+  quickAccess.forEach((item, i) => {
+    const el = document.querySelector(item.sel);
+    if (el) {
+      el.textContent = item.fallback[lang] || item.fallback['en'];
+    }
+  });
+
+  // Set all other translations
+  map.forEach(item => {
+    const el = document.querySelector(item.sel);
+    if (el && t[item.key]) {
+      el.textContent = t[item.key];
+    }
+  });
+}
+</script>
+
+  </body>
+</html>
